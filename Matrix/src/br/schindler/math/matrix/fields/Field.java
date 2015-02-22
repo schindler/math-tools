@@ -37,6 +37,18 @@ public interface Field  {
 	
 	/**
 	 * 
+	 * @param other
+	 */
+	void dec(Field other); 
+	
+	/**
+	 * 
+	 * @param other
+	 */
+	void scale(Field other);
+	
+	/**
+	 * 
 	 * @return
 	 */
 	Field clone();

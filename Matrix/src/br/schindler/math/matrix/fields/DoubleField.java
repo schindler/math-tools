@@ -120,4 +120,22 @@ public class DoubleField implements Field {
 	public Field clone()  {
 		return new DoubleField(value);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.fields.Field#dec(br.schindler.math.matrix.fields.Field)
+	 */
+	@Override
+	public void dec(Field other) {
+		value-=((DoubleField)other).value;		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.fields.Field#scale(br.schindler.math.matrix.fields.Field)
+	 */
+	@Override
+	public void scale(Field other) {
+		value*=((DoubleField)other).value;		
+	}
 }

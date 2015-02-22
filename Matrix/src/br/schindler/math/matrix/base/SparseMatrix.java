@@ -14,17 +14,7 @@ import br.schindler.math.matrix.fields.Field;
  * @author Fernando
  *
  */
-public abstract class SparseMatrix implements Matrix<Field>{
-
-	/**
-	 * 
-	 */
-	private int lines, columns;
-	
-	/**
-	 * 
-	 */
-	protected Field zero;
+public class SparseMatrix  extends BaseMatrix<Field> {
 	
 	/**
 	 * 
@@ -37,18 +27,16 @@ public abstract class SparseMatrix implements Matrix<Field>{
 	 * @param columns
 	 */
 	public SparseMatrix(int lines, int columns, Field zero) {
-		this.lines   = lines;
-		this.columns = columns;
-		this.zero    = zero;
+		super(lines, columns, zero);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#get(int, int)
+	 * @see br.schindler.math.matrix.base.BaseMatrix#create(int, int, br.schindler.math.matrix.fields.Field)
 	 */
 	@Override
-	public Field get(int i, int j) {
-		return getByIndex(i*this.columns+j);
+	public BaseMatrix<Field> create(int lines, int columns) {
+		return new SparseMatrix(lines, columns, zero);
 	}
 	
 	/*
@@ -56,7 +44,7 @@ public abstract class SparseMatrix implements Matrix<Field>{
 	 * @see br.schindler.math.matrix.Matrix<Field>#getByIndex(int)
 	 */
 	@Override
-	public Field getByIndex(int index) {
+	public synchronized Field getByIndex(int index) {
 		
 		if (index >= lines*columns)
 			throw new IndexOutOfBoundsException();
@@ -68,32 +56,24 @@ public abstract class SparseMatrix implements Matrix<Field>{
 		
 		return result;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#get(int, int, int, int)
-	 */
-	@Override
-	public Matrix<Field> get(int fromLine, int toLine, int fromCol, int toCol) throws IndexOutOfBoundsException {
-	 
-		return null;
-	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#set(int, int, java.lang.Number)
+	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
 	 */
 	@Override
-	public void set(int i, int j, Field elem) throws IndexOutOfBoundsException {
-		if (i < lines && j < columns){
+	public synchronized void setByIndex(int index, Field elem) {
+		if (index < lines * columns){
 			if (elem.equals(zero))
-				this.elements.remove(i*this.columns+j);
+				this.elements.remove(index);
 			else
-				this.elements.put(i*this.columns+j, elem);
+				this.elements.put(index, elem);
 		}
 		else
 			throw new IndexOutOfBoundsException();
+		
 	}
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -113,30 +93,70 @@ public abstract class SparseMatrix implements Matrix<Field>{
 	 * @see br.schindler.math.matrix.Matrix<Field>#fill(java.lang.Number)
 	 */
 	@Override
-	public  Matrix<Field>  fill(Field elem) {
-		this.zero = elem;
+	public  Matrix<Field> fill(Field elem) {
+		this.zero = elem.clone();
 		this.elements.clear();
 		return this;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#lines()
+	 * @see br.schindler.math.matrix.Matrix#mul(br.schindler.math.matrix.Matrix)
 	 */
 	@Override
-	public int lines() {
-		return this.lines;
+	public Matrix<Field> mul(Matrix<Field> other) {
+		if (columns() != other.lines())
+			throw new IndexOutOfBoundsException(String.format("mul %d != %d", columns(), other.lines()));
+		
+		SparseMatrix result = new SparseMatrix (lines, other.columns(), zero);
+ 
+		for (int i = 0; i < lines*other.columns(); i++) { 
+			Field v = mul.get(i, this, other);
+			
+			if (!v.equals(zero))
+				result.elements.put(i, v);
+		}
+		
+		return result;
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#columns()
+	 * @see br.schindler.math.matrix.Matrix#mul(java.lang.Object)
 	 */
 	@Override
-	public int columns() {
-		return this.columns;
+	public Matrix<Field> mul(Field elem) {
+		SparseMatrix result = new SparseMatrix(lines, columns, zero); 
+ 
+		for (Integer k : elements.keySet()){
+			Field v = elements.get(k).mul(elem);
+			
+			if (!zero.equals(v))
+				result.elements.put(k, v);	 
+		}	 		
+		
+		return result;
 	}
-	 
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#increment(java.lang.Object)
+	 */
+	@Override
+	public Matrix<Field> increment(Field elem) {
+		for (int i = 0; i < lines*columns; i++) { 
+			Field v = elements.get(i);
+			
+			if (v != null)
+				v.inc(elem);
+			else
+				if (!zero.equals(elem))
+					elements.put(i, elem.clone());
+		}	
+		
+		return this;
+	}
+ 	 
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -150,6 +170,10 @@ public abstract class SparseMatrix implements Matrix<Field>{
 				if (zero.equals(other.zero)) {
 					Set<Integer> key1 = this.elements.keySet();
 					Set<Integer> key2 = other.elements.keySet();
+					
+					if (key1.size()!=key2.size()) 
+						return false;
+					
 					for (Integer k : key1){
 						if (!key2.contains(k)) {
 							System.err.println("not key " + k + " elem: " + this.elements.get(k)); 
@@ -167,27 +191,46 @@ public abstract class SparseMatrix implements Matrix<Field>{
 		System.err.println("not SparseMatrix");
 		return false;
 	}
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder();
-	 
-		for (int i = 0; i < lines(); i++){
-			result.append("| ");
-			
-			for (int j = 0; j < columns(); j++){
-				result.append(String.format("%s ", get(i,j)));
-			}
-			
-			if (i +1 < lines())
-				result.append("|\n");
-			else
-				result.append(String.format("|[%dx%d]", lines(), columns()));
-		}
-				
-		return result.toString();
+	public Matrix<Field> add(Field elem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Field> add(Matrix<Field> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Field> decrement(Field elem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Field> sub(Field elem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Field> sub(Matrix<Field> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Field> scale(Field elem) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Field> transpose() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

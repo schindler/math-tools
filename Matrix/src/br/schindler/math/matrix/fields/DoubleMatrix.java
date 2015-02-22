@@ -83,8 +83,8 @@ public class DoubleMatrix implements Matrix<Double> {
 	 * @see br.schindler.math.matrix.Matrix#addScalar(java.lang.Object)
 	 */
 	@Override
-	public Matrix<Double> addScalar(Double elem) {
-		this.matrix.addScalar(new DoubleField(elem));
+	public Matrix<Double> increment(Double elem) {
+		this.matrix.increment(new DoubleField(elem));
 		return this;
 	}
 
@@ -111,8 +111,8 @@ public class DoubleMatrix implements Matrix<Double> {
 	 * @see br.schindler.math.matrix.Matrix#subScalar(java.lang.Object)
 	 */
 	@Override
-	public Matrix<Double> subScalar(Double elem) {
-		this.matrix.subScalar(new DoubleField(elem));
+	public Matrix<Double> decrement(Double elem) {
+		this.matrix.decrement(new DoubleField(elem));
 		return this;
 	}
 
@@ -208,5 +208,14 @@ public class DoubleMatrix implements Matrix<Double> {
 			return this.matrix.equals(((DoubleMatrix)obj).matrix);
 		else
 			return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
+	 */
+	@Override
+	public void setByIndex(int index, Double elem) {
+		this.matrix.setByIndex(index, new DoubleField(elem));		
 	}
 }

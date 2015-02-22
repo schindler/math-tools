@@ -9,17 +9,7 @@ import br.schindler.math.matrix.fields.Field;
  * @author Fernando
  *
  */
-public class FullMatrix implements Matrix<Field>{
-
-	/**
-	 * 
-	 */
-	private int lines, columns;
-	
-	/*
-	 * 
-	 */
-	private Field zero;
+public class FullMatrix extends BaseMatrix<Field> {
 	
 	/**
 	 * 
@@ -33,29 +23,18 @@ public class FullMatrix implements Matrix<Field>{
 	 * @param columns
 	 */
 	public FullMatrix(int lines, int columns, Field zero) {
-		this.lines    = lines;
-		this.columns  = columns;
+		super(lines, columns, zero); 
 		this.elements = new Field [lines*columns];
-		this.zero     = zero;
 		fill(zero);
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#get(int, int)
+	 * @see br.schindler.math.matrix.base.BaseMatrix#create(int, int, br.schindler.math.matrix.fields.Field)
 	 */
 	@Override
-	public Field get(int i, int j) throws IndexOutOfBoundsException {
-		return this.elements[i*this.columns+j];
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#set(int, int, java.lang.Number)
-	 */
-	@Override
-	public void set(int i, int j, Field elem) throws IndexOutOfBoundsException {
-		this.elements[i*this.columns+j] = elem;	
+	public BaseMatrix<Field> create(int lines, int columns) {
+		return new FullMatrix(lines, columns, zero);
 	}
 	
 	/*
@@ -82,49 +61,7 @@ public class FullMatrix implements Matrix<Field>{
 			}	
 		return this;
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#lines()
-	 */
-	@Override
-	public int lines() {
-		return this.lines;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#columns()
-	 */
-	@Override
-	public int columns() {
-		return this.columns;
-	}
 	 	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder result = new StringBuilder();
-	 
-		for (int i = 0; i < lines(); i++){
-			result.append("| ");
-			
-			for (int j = 0; j < columns(); j++){
-				result.append(String.format("%s ", get(i,j)));
-			}
-			
-			if (i +1 < lines())
-				result.append("|\n");
-			else
-				result.append(String.format("|[%dx%d]", lines(), columns()));
-		}
-				
-		return result.toString();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix<Field>#getByIndex(int)
@@ -133,33 +70,32 @@ public class FullMatrix implements Matrix<Field>{
 	public Field getByIndex(int index) {
 		return this.elements[index];
 	}
-
+	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#get(int, int, int, int)
+	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
 	 */
 	@Override
-	public Matrix<Field> get(int fromLine, int toLine, int fromCol, int toCol) {
-		throw new UnsupportedOperationException();
+	public void setByIndex(int index, Field elem) {
+		this.elements[index] = elem.clone();			
 	}
-
+  
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#addScalar(br.schindler.math.matrix.fields.Field)
+	 * @see br.schindler.math.matrix.Matrix#increment(java.lang.Object)
 	 */
 	@Override
-	public Matrix<Field> addScalar(Field elem) {
-		 
+	public Matrix<Field> increment(Field elem) {		 
 		for (int i = 0; i < lines*columns; i++) {
 			this.elements[i].inc(elem);
 		}
 		
 		return this;
 	}
-
+   
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#add(br.schindler.math.matrix.fields.Field)
+	 * @see br.schindler.math.matrix.Matrix#add(java.lang.Object)
 	 */
 	@Override
 	public Matrix<Field> add(Field elem) {
@@ -187,16 +123,16 @@ public class FullMatrix implements Matrix<Field>{
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#subScalar(br.schindler.math.matrix.fields.Field)
-	 */
+    /*
+     * (non-Javadoc)
+     * @see br.schindler.math.matrix.Matrix#decrement(java.lang.Object)
+     */
 	@Override
-	public Matrix<Field> subScalar(Field elem) {
+	public Matrix<Field> decrement(Field elem) {
 		FullMatrix result = this;
 		
 		for (int i = 0; i < lines*columns; i++) {
-			result.elements[i] = result.elements[i].sub(elem);
+			 result.elements[i].dec(elem);
 		}
 		
 		return result;
@@ -273,22 +209,8 @@ public class FullMatrix implements Matrix<Field>{
 		
 		FullMatrix result = new FullMatrix (lines, other.columns(), null);
 		
-		for (int i = 0; i < result.elements.length; i++) {
-			int col = i % other.columns();
-			int lin = i / other.columns();
-			int col1= lin * this.columns(); 
-			
-			Field ret = (Field) zero.clone();
-			
-			for (int j = 0; j < this.columns(); j++){
-				//TODO: Can I do it better?
-				Field val =  this.getByIndex(col1+j);
-				
-				if (null != val)
-					ret.inc(other.get(j, col).mul(val));
-			}	
-			
-			result.elements[i] = ret;
+		for (int i = 0; i < result.elements.length; i++) { 
+			result.elements[i] = mul.get(i, this, other);
 		}
 		
 		
@@ -309,24 +231,5 @@ public class FullMatrix implements Matrix<Field>{
 		}
 		
 		return null;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		
-		if (!(obj instanceof FullMatrix)) return false;
-		
-		FullMatrix other = (FullMatrix) obj;
-		
-		if (lines != other.lines || columns != other.columns) return false;
-		
-		for (int i = 0; i < lines*columns; i++) {
-			 if (!elements[i].equals(other.elements[i])) return false;
-		}
-		return true;
 	}
 }

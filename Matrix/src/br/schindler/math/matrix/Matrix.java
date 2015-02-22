@@ -8,11 +8,19 @@ package br.schindler.math.matrix;
  */
 public interface Matrix<T> {
 	/**
-	 * 
-	 * @param index
-	 * @return
+	 * Recupear um elemento da matrix
+	 * @param index number in [0..columns*lines[
+	 * @return T
+	 * @see get
 	 */
 	T getByIndex(int index);
+	
+	/**
+	 * 
+	 * @param index
+	 * @param elem
+	 */
+	void setByIndex(int index, T elem);
 	
 	/**
 	 * Recuperar um elemento da Matrix<T>
@@ -55,7 +63,7 @@ public interface Matrix<T> {
 	 * @param elem
 	 * @return
 	 */
-	Matrix<T> addScalar(T elem);
+	Matrix<T> increment(T elem);
 	
 	/**
 	 * 
@@ -76,7 +84,7 @@ public interface Matrix<T> {
 	 * @param elem
 	 * @return
 	 */
-	Matrix<T> subScalar(T elem);
+	Matrix<T> decrement(T elem);
 	
 	/**
 	 * 
@@ -103,14 +111,14 @@ public interface Matrix<T> {
 	 * @param other
 	 * @return
 	 */
-	Matrix<T> mul (T elem); 
+	Matrix<T> mul(T elem); 
 	
 	/**
 	 * 
 	 * @param other
 	 * @return
 	 */
-	Matrix<T> mul (Matrix<T> other); 
+	Matrix<T> mul(Matrix<T> other); 
 	
 	/**
 	 * 
