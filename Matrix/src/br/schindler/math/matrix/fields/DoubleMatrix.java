@@ -50,6 +50,15 @@ public class DoubleMatrix implements Matrix<Double> {
 	public Matrix<Double> get(int fromLine, int toLine, int fromCol, int toCol) {
 		return new DoubleMatrix(this.matrix.get(fromLine, toLine, fromCol, toCol));
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#set(int, int, int, int, br.schindler.math.matrix.Matrix)
+	 */
+	@Override
+	public void set(int fromLine, int toLine, int fromCol, int toCol, Matrix<Double> other) {
+		this.matrix.set(fromLine, toLine, fromCol, toCol, ((DoubleMatrix)other).matrix);
+	}
 
 	/*
 	 * (non-Javadoc)
