@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
 import br.schindler.math.matrix.BaseMatrix;
 import br.schindler.math.matrix.Matrix;
 import br.schindler.math.matrix.fields.Field;
+import br.schindler.math.matrix.operations.Function;
 import br.schindler.math.matrix.operations.Operation;
 
 /**
@@ -299,5 +300,15 @@ public class MultiThreadMatrix implements Matrix<Field>  {
 			Matrix<Field> other) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#call(br.schindler.math.matrix.operations.Function)
+	 */
+	@Override
+	public Matrix<Field> call(Function<Field> func) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

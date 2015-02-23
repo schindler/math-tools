@@ -4,6 +4,7 @@
 package br.schindler.math.matrix.fields;
 
 import br.schindler.math.matrix.Matrix;
+import br.schindler.math.matrix.operations.Function;
 
 /**
  * @author Fernando
@@ -226,5 +227,11 @@ public class DoubleMatrix implements Matrix<Double> {
 	@Override
 	public void setByIndex(int index, Double elem) {
 		this.matrix.setByIndex(index, new DoubleField(elem));		
+	}
+
+	@Override
+	public Matrix<Double> call(Function<Double> func) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

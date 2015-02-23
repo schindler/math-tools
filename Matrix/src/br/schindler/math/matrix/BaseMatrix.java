@@ -1,5 +1,7 @@
 package br.schindler.math.matrix;
 
+import br.schindler.math.matrix.operations.Function;
+
 
 /**
  * 
@@ -103,6 +105,20 @@ public abstract class BaseMatrix<T> implements Matrix<T> {
 		}		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#call(br.schindler.math.matrix.operations.Function)
+	 */
+	@Override
+	public Matrix<T> call(Function<T> func) {
+		Matrix<T> ret = create(lines, columns);
+		for (int i = 0; i < lines; i++) {
+			for (int j = 0; j < columns; j++){
+				ret.set(i,j,func.perform(get(i,j)));
+			}
+		}
+		return ret;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix#lines()

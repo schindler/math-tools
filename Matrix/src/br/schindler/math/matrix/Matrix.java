@@ -1,5 +1,7 @@
 package br.schindler.math.matrix;
 
+import br.schindler.math.matrix.operations.Function;
+
 
 /**
  * Interface padrão para objetos que implementaão operações com matrizes
@@ -130,6 +132,13 @@ public interface Matrix<T> {
 	 * 
 	 */
 	Matrix<T> transpose(); 
+	
+	/**
+	 * Aplicar a função em todos elementos
+	 * @param func
+	 * @return this matrix
+	 */
+	Matrix<T> call(Function<T> func);	
 	
 	/**
 	 * 
