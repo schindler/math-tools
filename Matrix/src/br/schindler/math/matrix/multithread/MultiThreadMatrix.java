@@ -9,8 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import br.schindler.math.matrix.BaseMatrix;
 import br.schindler.math.matrix.Matrix;
-import br.schindler.math.matrix.base.BaseMatrix;
 import br.schindler.math.matrix.fields.Field;
 import br.schindler.math.matrix.operations.Operation;
 
@@ -67,9 +67,11 @@ public class MultiThreadMatrix implements Matrix<Field>  {
 	 * @param op
 	 */
 	protected MultiThreadMatrix perform(Operation<? extends Field> op, int from, int to, Object ... params) {
+		System.err.println("start->" + from);
 		for (int i = from; i < to; i++){
 			this.matrix.setByIndex(i, op.get(i, params));
 		}
+		System.err.println("end->" + from);
 		return this;
 	}
 
@@ -232,9 +234,10 @@ public class MultiThreadMatrix implements Matrix<Field>  {
 	 */
 	@Override
 	public Matrix<Field> mul(Matrix<Field> other) {
-		if (columns() != other.lines())
+		/*if (columns() != other.lines())
 			throw new IndexOutOfBoundsException();		
-		return new MultiThreadMatrix(matrix.create(matrix.lines(), other.columns())).execute(matrix.mul, this, other);
+		return new MultiThreadMatrix(matrix.create(matrix.lines(), other.columns())).execute(matrix.mul, this, other);*/
+		return null;
 	}
 
 	/*
@@ -289,5 +292,12 @@ public class MultiThreadMatrix implements Matrix<Field>  {
 	@Override
 	public String toString() {
 		return this.matrix.toString();
+	}
+
+	@Override
+	public void set(int fromLine, int toLine, int fromCol, int toCol,
+			Matrix<Field> other) {
+		// TODO Auto-generated method stub
+		
 	}
 }
