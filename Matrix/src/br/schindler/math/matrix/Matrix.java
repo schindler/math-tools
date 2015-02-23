@@ -38,6 +38,12 @@ public interface Matrix<T> {
 	Matrix<T> get(int fromLine, int toLine, int fromCol, int toCol);
 	
 	/**
+	 * 
+	 * @return
+	 */
+	void     set(int fromLine, int toLine, int fromCol, int toCol, Matrix<T> other);
+	
+	/**
 	 * Ajustar um elemento da Matrix<T>
 	 * @param i
 	 * @param j
@@ -70,6 +76,13 @@ public interface Matrix<T> {
 	 * @param elem
 	 * @return
 	 */
+	Matrix<T> decrement(T elem);
+	
+	/**
+	 * 
+	 * @param elem
+	 * @return
+	 */
 	Matrix<T> add(T elem);
 	
 	/**
@@ -78,13 +91,6 @@ public interface Matrix<T> {
 	 * @return
 	 */
 	Matrix<T> add(Matrix<T> other);
-	
-	/**
-	 * 
-	 * @param elem
-	 * @return
-	 */
-	Matrix<T> decrement(T elem);
 	
 	/**
 	 * 
