@@ -96,11 +96,9 @@ public abstract class BaseMatrix<T> implements Matrix<T> {
 		if (fromLine < 0 || toLine < 0 ||  fromCol < 0 || toLine > lines || toCol > columns)
 			throw new IndexOutOfBoundsException();
 		
-		Matrix<T> result = create(toLine-fromLine, toCol-fromCol);
-		
 		for (int i = fromLine, ic = 0; i < toLine; i++, ic++){
 			for (int j = fromCol, jc = 0; j < toCol; j++, jc++){
-				result.set(ic, jc, other.get(i, j));
+				this.set(i, j, other.get(ic, jc));
 			}
 		}		
 	}

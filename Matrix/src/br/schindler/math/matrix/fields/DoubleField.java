@@ -100,7 +100,7 @@ public class DoubleField implements Field {
 	 */
 	@Override
 	public String toString() {
-		return String.format("%.2f", value);
+		return (value <= -.1) ? String.format("%.03f", value) :  String.format(" %.03f", value);
 	}
 	
 	/*

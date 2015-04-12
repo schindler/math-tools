@@ -173,7 +173,7 @@ public class DoubleMatrix extends BaseMatrix<Double> {
 		for (int i =0 ; i < lines; i++) {
 			double [] r1 = elements[i];
 			for (int j = 0; j < columns; j++) {
-				result.elements[j][i] = r1[j]*other.get(i, j);
+				result.elements[i][j] = r1[j]-other.get(i, j);
 			}
 		}
 		return result;

@@ -223,10 +223,18 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#sub(br.schindler.math.matrix.Matrix)
+	 */
 	@Override
 	public Matrix<Field> sub(Matrix<Field> other) {
-		// TODO Auto-generated method stub
-		return null;
+		Matrix<Field>  ret = new SparseMatrix(lines, columns, zero);
+		for (int l = 0; l < lines; l++){
+			for (int c  = 0; c < columns; c++)
+				ret.set(l, c, get(l, c).sub(other.get(l, c)));
+		}
+		return ret;
 	}
 
 	@Override
@@ -235,9 +243,17 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#transpose()
+	 */
 	@Override
 	public Matrix<Field> transpose() {
-		// TODO Auto-generated method stub
-		return null;
+		SparseMatrix ret = new SparseMatrix(columns, lines, zero);
+		for (int l = 0; l < lines; l++){
+			for (int c  = 0; c < columns; c++)
+				ret.set(c, l, get(l, c));
+		}
+		return ret;
 	}
 }

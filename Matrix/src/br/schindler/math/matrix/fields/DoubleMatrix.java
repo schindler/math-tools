@@ -229,9 +229,17 @@ public class DoubleMatrix implements Matrix<Double> {
 		this.matrix.setByIndex(index, new DoubleField(elem));		
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#call(br.schindler.math.matrix.operations.Function)
+	 */
 	@Override
-	public Matrix<Double> call(Function<Double> func) {
-		// TODO Auto-generated method stub
-		return null;
+	public Matrix<Double> call(final Function<Double> func) {
+		return new DoubleMatrix(this.matrix.call(new Function<Field>() {
+			@Override
+			public Field perform(Field val) {
+				return new DoubleField(func.perform((Double)val.value()));
+			}
+		}));
 	}
 }
