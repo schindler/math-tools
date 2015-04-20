@@ -2,25 +2,24 @@ package br.schindler.math.matrix.fields;
 
 import br.schindler.math.matrix.BaseMatrix;
 import br.schindler.math.matrix.Matrix;
-import br.schindler.math.matrix.operations.Multiplication;
+import br.schindler.math.matrix.operations.Function;
 
  
 
 /**
- * @author Fernando
- *
+ * Implementação de uma full matrix para fields genericos
+ * @author fernando.schindler@gmail.com
  */
 public class FullMatrix extends BaseMatrix<Field> {
 	
 	/**
 	 * 
 	 */
-	protected Field [] elements;
+	protected Field [][] elements;
 	
 	
 	protected Field zero;
-	
-	public Multiplication<Field> mul;
+	 
 	
 	/**
 	 * 
@@ -29,11 +28,28 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 */
 	public FullMatrix(int lines, int columns, Field zero) {
 		super(lines, columns); 
-		this.elements = new Field [lines*columns];
+		this.elements = new Field [lines][columns];
 		this.zero     = zero;
-		this.mul      = new Multiplication<Field>(zero);
-		fill(zero);
-		
+		fill(zero);	
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#get(int, int)
+	 */
+	@Override
+	public Field get(int i, int j) {
+		return this.elements [i][j];
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#set(int, int, java.lang.Object)
+	 */
+	@Override
+	public Matrix<Field> set(int i, int j, Field elem) {
+		this.elements [i][j] = elem;
+		return this;
 	}
 	
 	/*
@@ -51,9 +67,9 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Matrix<Field> fill(int i, Field elem) throws IndexOutOfBoundsException {
-		i *= this.columns;
-		for (; i < columns; i++)
-			this.elements[i] = elem.clone();
+		Field [] row = this.elements[i];
+		for (int j = 0; j < columns; j++)
+			row[j] = elem.clone();
 		return this;
 	}
 	
@@ -63,29 +79,24 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Matrix<Field> fill(Field elem) {
-		if (null != elem)
-			for (int i = 0; i < lines*columns; i++) {
-				this.elements[i] = elem.clone();
-			}	
+		for (int i =0; i < lines; i++)
+			fill(i, elem);
 		return this;
-	}
-	 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#getByIndex(int)
-	 */
-	@Override
-	public Field getByIndex(int index) {
-		return this.elements[index];
 	}
 	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
+	 * @see br.schindler.math.matrix.BaseMatrix#call(br.schindler.math.matrix.operations.Function)
 	 */
 	@Override
-	public void setByIndex(int index, Field elem) {
-		this.elements[index] = elem.clone();			
+	public Matrix<Field> call(Function<Field> func) {
+		for (int i = 0; i < lines; i++){
+			Field [] row = elements[i];
+			for (int j = 0; j < columns; j++){
+				row[j] = func.perform(row[j]);
+			}
+		}
+		return this;
 	}
   
 	/*
@@ -93,12 +104,18 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 * @see br.schindler.math.matrix.Matrix#increment(java.lang.Object)
 	 */
 	@Override
-	public Matrix<Field> increment(Field elem) {		 
-		for (int i = 0; i < elements.length; i++) {
-			this.elements[i].inc(elem);
-		}
-		
-		return this;
+	public Matrix<Field> increment(final Field elem) {		
+		return call(new Function<Field>() {
+			/*
+			 * (non-Javadoc)
+			 * @see br.schindler.math.matrix.operations.Function#perform(java.lang.Object)
+			 */
+			@Override
+			public Field perform(Field val) {
+				val.inc(elem);
+				return val;
+			}
+		}); 
 	}
    
 	/*
@@ -109,8 +126,9 @@ public class FullMatrix extends BaseMatrix<Field> {
 	public Matrix<Field> add(Field elem) {
 		FullMatrix result = new FullMatrix (lines, columns, null);
 		
-		for (int i = 0; i < elements.length; i++) {
-			result.elements[i] = elem.add(this.elements[i]);
+		for (int i = 0; i < lines(); i++) {
+			for (int j = 0; j < columns(); j++) 
+				result.elements[i][j] = elem.add(this.elements[i][j]);
 		}
 		
 		return result;
@@ -124,8 +142,9 @@ public class FullMatrix extends BaseMatrix<Field> {
 	public Matrix<Field> add(Matrix<Field> other) {
 		FullMatrix result = new FullMatrix (lines, columns, null);
 		
-		for (int i = 0; i < elements.length; i++) {
-			result.elements[i] = other.getByIndex(i).add(this.elements[i]);
+		for (int i = 0; i < lines(); i++) {
+			for (int j = 0; j < columns(); j++) 
+				result.elements[i][j] = other.get(i,j).add(this.elements[i][j]);
 		}
 		
 		return result;
@@ -137,13 +156,12 @@ public class FullMatrix extends BaseMatrix<Field> {
      */
 	@Override
 	public Matrix<Field> decrement(Field elem) {
-		FullMatrix result = this;
-		
-		for (int i = 0; i < elements.length; i++) {
-			 result.elements[i].dec(elem);
+		for (int i = 0; i < lines(); i++) {
+			for (int j = 0; j < columns(); j++) 
+				this.elements[i][j].dec(elem);
 		}
 		
-		return result;
+		return this;
 	}
 
 	/*
@@ -151,14 +169,14 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 * @see br.schindler.math.matrix.Matrix<Field>#sub(br.schindler.math.matrix.fields.Field)
 	 */
 	@Override
-	public Matrix<Field> sub(Field elem) {
+	public Matrix<Field> sub(final Field elem) {
 		FullMatrix result = new FullMatrix (lines, columns, null);
-		
-		for (int i = 0; i < elements.length; i++) {
-			result.elements[i] = elem.sub(this.elements[i]);
-		}
-		
-		return result;
+		return result.call(new Function<Field>() {
+			@Override
+			public Field perform(Field val) {
+				return val.sub(elem);
+			}
+		});	 
 	}
 
 	/*
@@ -166,13 +184,14 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 * @see br.schindler.math.matrix.Matrix<Field>#sub(br.schindler.math.matrix.Matrix<Field>)
 	 */
 	@Override
-	public Matrix<Field> sub(Matrix<Field> other) {
-		FullMatrix result = new FullMatrix (lines, columns, null);
-		
-		for (int i = 0; i < elements.length; i++) {
-			result.elements[i] = other.getByIndex(i).sub(this.elements[i]);
-		}
-		
+	public Matrix<Field> sub(final Matrix<Field> other) {
+		FullMatrix result = new FullMatrix (lines, columns, null);		
+		for (int i = 0; i < lines(); i++) {
+			Field rowr [] = result.elements[i];
+			Field row  [] = elements[i];			
+			for (int j = 0; j < columns(); j++) 
+				rowr[j] = other.get(i,j).sub(row[j]);
+		}		
 		return result;
 	}
 
@@ -183,8 +202,9 @@ public class FullMatrix extends BaseMatrix<Field> {
 	@Override
 	public Matrix<Field> scale(Field elem) {
  
-		for (int i = 0; i < elements.length; i++) {
-			 elements[i] = elements[i].mul(elem);
+		for (int i = 0; i < lines(); i++) {
+			for (int j = 0; j < columns(); j++) 
+				elements[i][j].scale(elem);
 		}
 		
 		return this;
@@ -195,49 +215,46 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 * @see br.schindler.math.matrix.Matrix<Field>#mul(br.schindler.math.matrix.fields.Field)
 	 */
 	@Override
-	public Matrix<Field> mul(Field elem) {
+	public Matrix<Field> mul(final Field elem) {
 		FullMatrix result = new FullMatrix (lines, columns, null);
-		
-		for (int i = 0; i < lines*columns; i++) {
-			result.elements[i] = elem.mul(this.elements[i]);
-		}
-		
-		return result;
+		return result.call(new Function<Field>() {
+			@Override
+			public Field perform(Field val) {
+				return elem.mul(val);
+			}
+		});	 
 	}
-
+	
 	/*
 	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#mul(br.schindler.math.matrix.Matrix<Field>)
+	 * @see br.schindler.math.matrix.Matrix#mul(br.schindler.math.matrix.Matrix)
 	 */
 	@Override
 	public Matrix<Field> mul(Matrix<Field> other) {
 		
 		if (columns() != other.lines())
-			throw new IndexOutOfBoundsException(String.format("mul %d != %d", columns(), other.lines()));
+			throw new IndexOutOfBoundsException("mul columns() has to be equal other.lines()");
 		
-		FullMatrix result = new FullMatrix (lines, other.columns(), null);
-		
-		for (int i = 0; i < result.elements.length; i++) { 
-			result.elements[i] = mul.get(i, this, other);
-		}
-		
-		
+		FullMatrix result = new FullMatrix(lines, other.columns(), null);		
+		int aCols         = columns; 
+		int bCols         = other.columns();
+		Field[][] rst     = result.elements;
+		Field[] bcj       = new Field[aCols];
+
+		for (int j = 0; j < bCols; j++) {
+			for (int k = 0; k < aCols; k++) {
+				bcj[k] = other.get(k, j);
+			}
+			for (int i = 0; i < lines; i++) {
+				Field[] ari = elements[i];
+				Field     s = zero.clone();
+				for (int k = 0; k < aCols; k++) {
+					s.inc(ari[k].mul(bcj[k]));
+				}
+				rst[i][j] = s;
+			}
+		} 
 		return result;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#transpose()
-	 */
-	@Override
-	public Matrix<Field> transpose() {
-		FullMatrix result = new FullMatrix (columns, lines, null);
-		
-		for (int i = 0; i < lines; i++) {
-			for (int j = 0; j < columns; j++)
-				result.set(j, i, get(i, j).clone());
-		}
-		
-		return null;
-	}
+ 
 }

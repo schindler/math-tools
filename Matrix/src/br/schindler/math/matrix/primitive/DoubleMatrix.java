@@ -29,27 +29,7 @@ public class DoubleMatrix extends BaseMatrix<Double> {
 		super(lines, columns);
 		this.elements = new double [lines][columns];
 	}
-
-	/* (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#getByIndex(int)
-	 */
-	@Override
-	public Double getByIndex(int index) {
-		int col = index % columns;
-		int lin = index / columns;
-		return this.elements[lin][col];
-	}
-
-	/* (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
-	 */
-	@Override
-	public void setByIndex(int index, Double elem) {
-		int col = index % columns;
-		int lin = index / columns;
-		this.elements[lin][col]= elem;
-	}
-	
+ 	
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.BaseMatrix#get(int, int)
@@ -64,8 +44,9 @@ public class DoubleMatrix extends BaseMatrix<Double> {
 	 * @see br.schindler.math.matrix.BaseMatrix#set(int, int, java.lang.Object)
 	 */
 	@Override
-	public void set(int i, int j, Double elem) {
+	public Matrix<Double> set(int i, int j, Double elem) {
 		this.elements[i][j] = elem;
+		return this;
 	}
 
 	/* (non-Javadoc)
@@ -213,8 +194,9 @@ public class DoubleMatrix extends BaseMatrix<Double> {
 	 */
 	@Override
 	public Matrix<Double> mul(Matrix<Double> other) {
+		
 		if (columns() != other.lines())
-			throw new IndexOutOfBoundsException();
+			throw new IndexOutOfBoundsException("mul columns() has to be equal other.lines()");
 		
 		DoubleMatrix result = new DoubleMatrix(lines, other.columns());
 		double[][] p2       =  ((DoubleMatrix) other).elements;		
@@ -242,21 +224,6 @@ public class DoubleMatrix extends BaseMatrix<Double> {
  
 		return result;
 	}
-
-	/* (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#transpose()
-	 */
-	@Override
-	public Matrix<Double> transpose() {
-		DoubleMatrix result = new DoubleMatrix(columns, lines);
-		for (int i =0 ; i < lines; i++) {
-			double [] r1 = elements[i];
-			for (int j = 0; j < columns; j++) {
-				result.elements[j][i] = r1[j];
-			}
-		}
-		return result;
-	}
 	
 	/*
 	 * (non-Javadoc)
@@ -275,6 +242,7 @@ public class DoubleMatrix extends BaseMatrix<Double> {
 				double [] r2 = other.elements[i];
 				for (int j = 0; j < columns; j++) {
 					if (Math.abs(r1[j]-r2[j]) > 10e-8) {
+						System.err.println("mat equal failure: " + r1[j] + " != " + r2[j]);
 						return false;
 					}
 				}

@@ -78,9 +78,9 @@ public class MathTest {
 			System.err.println(String.format("Matrix RT %dx%d", m2.lines(), m2.columns()));
  
 			switch (name.charAt(0)) {
-			case 's': for (int i = 0; i < 1000; i++) Assert.assertEquals(true, m2.equals(MatrixMath.sin(m1))); break;
-			case 'c': for (int i = 0; i < 1000; i++) Assert.assertEquals(true, m2.equals(MatrixMath.cos(m1))); break;
-			case 'm': for (int i = 0; i < 1000; i++) Assert.assertEquals(true, m2.equals(MatrixMath.sigmoid(m1))); break;
+			case 's': for (int i = 0; i < 1; i++) Assert.assertEquals(true, m2.equals(MatrixMath.sin(m1))); break;
+			case 'c': for (int i = 0; i < 1; i++) Assert.assertEquals(true, m2.equals(MatrixMath.cos(m1))); break;
+			case 'm': for (int i = 0; i < 1; i++) Assert.assertEquals(true, m2.equals(MatrixMath.sigmoid(m1))); break;
 			}
 			
 		} catch (IOException e) {

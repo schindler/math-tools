@@ -9,7 +9,6 @@ import java.util.Set;
 
 import br.schindler.math.matrix.BaseMatrix;
 import br.schindler.math.matrix.Matrix;
-import br.schindler.math.matrix.operations.Multiplication;
 
 /**
  * @author Fernando
@@ -23,8 +22,7 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	protected Map<Integer, Field> elements = new HashMap<Integer, Field>();
 	
 	protected Field zero;
-	
-	public Multiplication<Field> mul;
+ 
 	
 	/**
 	 * 
@@ -34,7 +32,6 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	public SparseMatrix(int lines, int columns, Field zero) {
 		super(lines, columns);
 		this.zero = zero;
-		this.mul  = new Multiplication<Field>(zero);
 	}
 
 	/*
@@ -45,43 +42,7 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	public BaseMatrix<Field> create(int lines, int columns) {
 		return new SparseMatrix(lines, columns, zero);
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix<Field>#getByIndex(int)
-	 */
-	@Override
-	public synchronized Field getByIndex(int index) {
-		
-		if (index >= lines*columns)
-			throw new IndexOutOfBoundsException();
-		
-		Field result = this.elements.get(index);
-		
-		if (null == result)
-			result = zero;
-		
-		return result;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
-	 */
-	@Override
-	public synchronized void setByIndex(int index, Field elem) {
-		if (index < lines * columns){
-			if (elem.equals(zero))
-				this.elements.remove(index);
-			else
-				this.elements.put(index, elem);
-		}
-		else
-			throw new IndexOutOfBoundsException();
-		
-	}
-	
-	
+ 	
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix<Field>#fill(int, java.lang.Number)
@@ -90,7 +51,7 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	public Matrix<Field> fill(int i, Field elem) throws IndexOutOfBoundsException {
 		i *= this.columns; 
 		for (int j = 0; j < columns; j++){
-			this.elements.put(i+j, elem);
+			this.elements.put(i+j, elem.clone());
 		}
 		return this;
 	}
@@ -108,22 +69,36 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#scale(java.lang.Object)
+	 */
+	@Override
+	public Matrix<Field> scale(Field elem) {
+		for (Field f : elements.values())
+			f.scale(elem);
+		return this;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix#mul(br.schindler.math.matrix.Matrix)
 	 */
 	@Override
 	public Matrix<Field> mul(Matrix<Field> other) {
 		if (columns() != other.lines())
-			throw new IndexOutOfBoundsException(String.format("mul %d != %d", columns(), other.lines()));
-		
-		SparseMatrix result = new SparseMatrix (lines, other.columns(), zero);
- 
-		for (int i = 0; i < lines*other.columns(); i++) { 
-			Field v = mul.get(i, this, other);
-			
-			if (!v.equals(zero))
-				result.elements.put(i, v);
+			throw new IndexOutOfBoundsException(String.format("mul %d != %d", columns(), other.lines()));		
+		SparseMatrix result = new SparseMatrix(lines, other.columns(), zero);		
+		for (int c = 0; c < other.columns(); c++){
+			 for (Integer k : elements.keySet()){
+				int l =(k % columns); 
+				int rk = result.columns*l+c;
+				Field v = result.elements.get(rk);				
+				if (null == v)
+					v = zero.clone();				
+				v.inc(elements.get(k).mul(other.get(l, c)));
+				if (!v.equals(zero))
+					result.elements.put(rk, v);
+			 }
 		}
-		
 		return result;
 	}
 	
@@ -133,15 +108,14 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Matrix<Field> mul(Field elem) {
-		SparseMatrix result = new SparseMatrix(lines, columns, zero); 
- 
+		SparseMatrix result = new SparseMatrix(lines, columns, zero);  
+		if (elem.equals(zero))
+			return result;		
 		for (Integer k : elements.keySet()){
-			Field v = elements.get(k).mul(elem);
-			
-			if (!zero.equals(v))
-				result.elements.put(k, v);	 
-		}	 		
-		
+			Field v = elements.get(k).mul(elem);			
+			if (!zero.equals(v))		 
+				result.elements.put(k, v);
+		}
 		return result;
 	}
 	
@@ -151,17 +125,26 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Matrix<Field> increment(Field elem) {
+		if (elem.equals(zero))
+			return this;		
 		for (int i = 0; i < lines*columns; i++) { 
 			Field v = elements.get(i);
 			
 			if (v != null)
 				v.inc(elem);
 			else
-				if (!zero.equals(elem))
-					elements.put(i, elem.clone());
-		}	
-		
+				elements.put(i, elem.clone());
+		}			
 		return this;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#decrement(java.lang.Object)
+	 */
+	@Override
+	public Matrix<Field> decrement(Field elem) {
+		return increment(elem.neg());
 	}
  	 
 	/*
@@ -199,28 +182,37 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#add(java.lang.Object)
+	 */
 	@Override
 	public Matrix<Field> add(Field elem) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#add(br.schindler.math.matrix.Matrix)
+	 */
 	@Override
 	public Matrix<Field> add(Matrix<Field> other) {
-		// TODO Auto-generated method stub
-		return null;
+		Matrix<Field>  ret = new SparseMatrix(lines, columns, zero);
+		for (int l = 0; l < lines; l++){
+			for (int c  = 0; c < columns; c++)
+				ret.set(l, c, get(l, c).add(other.get(l, c)));
+		}
+		return ret;
 	}
 
-	@Override
-	public Matrix<Field> decrement(Field elem) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#sub(java.lang.Object)
+	 */
 	@Override
 	public Matrix<Field> sub(Field elem) {
-		// TODO Auto-generated method stub
-		return null;
+		return add(elem.neg());
 	}
 
 	/*
@@ -237,12 +229,6 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 		return ret;
 	}
 
-	@Override
-	public Matrix<Field> scale(Field elem) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix#transpose()
@@ -250,10 +236,34 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	@Override
 	public Matrix<Field> transpose() {
 		SparseMatrix ret = new SparseMatrix(columns, lines, zero);
-		for (int l = 0; l < lines; l++){
-			for (int c  = 0; c < columns; c++)
-				ret.set(c, l, get(l, c));
+		for (Integer k : elements.keySet()){
+			int i =(k %    columns); 
+			int j = k - (i*columns);
+			ret.elements.put(j*lines+i, elements.get(k));
 		}
 		return ret;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#get(int, int)
+	 */
+	@Override
+	public Field get(int i, int j) {
+		Field result = this.elements.get(i*columns+j); 
+		return (null == result) ? zero.clone() : result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#set(int, int, java.lang.Object)
+	 */
+	@Override
+	public Matrix<Field> set(int i, int j, Field elem) {		
+		if (zero.equals(elem))
+			elements.remove(i*columns+j);
+		else
+			elements.put(i*columns+j, elem.clone());
+		return this;
 	}
 }

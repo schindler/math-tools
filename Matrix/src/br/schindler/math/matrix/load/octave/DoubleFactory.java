@@ -24,7 +24,7 @@ public class DoubleFactory implements MatrixFactory<Double> {
 	 */
 	@Override
 	public Matrix<Double> create(int lines, int cols) {
-		//return new DoubleMatrix(new SparseMatrix(lines, cols, new DoubleField(0.0)));
+		//return new DoubleMatrix(new FullMatrix(lines, cols, new DoubleField(0.0)));
 		return new DoubleMatrix(lines, cols);
 	}
 

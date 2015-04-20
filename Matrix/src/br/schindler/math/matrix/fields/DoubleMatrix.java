@@ -24,15 +24,6 @@ public class DoubleMatrix implements Matrix<Double> {
 	public DoubleMatrix(Matrix<Field> m) {
 		this.matrix =  m;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#getByIndex(int)
-	 */
-	@Override
-	public Double getByIndex(int index) {
-		return (Double) this.matrix.getByIndex(index).value();
-	}
  
 	/*
 	 * (non-Javadoc)
@@ -57,8 +48,9 @@ public class DoubleMatrix implements Matrix<Double> {
 	 * @see br.schindler.math.matrix.Matrix#set(int, int, int, int, br.schindler.math.matrix.Matrix)
 	 */
 	@Override
-	public void set(int fromLine, int toLine, int fromCol, int toCol, Matrix<Double> other) {
+	public Matrix<Double> set(int fromLine, int toLine, int fromCol, int toCol, Matrix<Double> other) {
 		this.matrix.set(fromLine, toLine, fromCol, toCol, ((DoubleMatrix)other).matrix);
+		return this;
 	}
 
 	/*
@@ -66,8 +58,9 @@ public class DoubleMatrix implements Matrix<Double> {
 	 * @see br.schindler.math.matrix.Matrix#set(int, int, java.lang.Object)
 	 */
 	@Override
-	public void set(int i, int j, Double elem) { 
-		this.matrix.set(i, j, new DoubleField(elem));		
+	public Matrix<Double> set(int i, int j, Double elem) { 
+		this.matrix.set(i, j, new DoubleField(elem));
+		return this;
 	}
 
 	/*
@@ -219,16 +212,7 @@ public class DoubleMatrix implements Matrix<Double> {
 		else
 			return false;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see br.schindler.math.matrix.Matrix#setByIndex(int, java.lang.Object)
-	 */
-	@Override
-	public void setByIndex(int index, Double elem) {
-		this.matrix.setByIndex(index, new DoubleField(elem));		
-	}
-
+ 
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix#call(br.schindler.math.matrix.operations.Function)
@@ -241,5 +225,19 @@ public class DoubleMatrix implements Matrix<Double> {
 				return new DoubleField(func.perform((Double)val.value()));
 			}
 		}));
+	}
+
+	@Override
+	public Matrix<Double> set(Iterable<Integer> lines,
+			Iterable<Integer> columns, Matrix<Double> other) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Matrix<Double> call(Iterable<Integer> lines,
+			Iterable<Integer> columns, Function<Double> func) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

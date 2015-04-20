@@ -48,6 +48,11 @@ public interface Field  {
 	void scale(Field other);
 	
 	/**
+	 * @return -1 * this
+	 */
+	Field neg();
+	
+	/**
 	 * 
 	 * @return
 	 */

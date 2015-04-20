@@ -33,7 +33,7 @@ public class MatrixMath {
 	}
 
 	/**
-	 * Aplica funï¿½ï¿½o seno
+	 * Aplica função seno
 	 * @param matrix
 	 * @see {@link Math.sin}
 	 * @return {@link Matrix}
@@ -46,13 +46,13 @@ public class MatrixMath {
 			 */
 			@Override
 			public Double perform(Double val) {
-				return  Math.sin(val);
+				return Math.sin(val);
 			}
 		});
 	}
 
 	/**
-	 * Aplica funï¿½ï¿½o cosseno
+	 * Aplica função cosseno
 	 * @param matrix
 	 * @see {@link Math.cos}
 	 * @return {@link Matrix}
@@ -71,7 +71,7 @@ public class MatrixMath {
 	}
 	
 	/**
-	 * Criar uma pertubaï¿½ï¿½o nos itens da matrix
+	 * Criar uma pertubação nos itens da matrix
 	 * @param matrix
 	 * @return {@link Matrix}
 	 */
@@ -95,8 +95,8 @@ public class MatrixMath {
 	 */
 	static public List<Matrix<Double>> qr(Matrix<Double> A, MatrixFactory<Double> factory){
 		List<Matrix<Double>> ret = new ArrayList<Matrix<Double>>();
-		Double []      b = new Double [A.lines()];
-		Double []      v = new Double [A.lines()];
+		Double []      b = new Double [A.lines()];//TODO: Poderia ser Sparse?
+		Double []      v = new Double [A.lines()];//TODO: Poderia ser Sparse?
 		Matrix<Double> Q = factory.create(A.lines(),   A.columns());
 		Matrix<Double> R = factory.create(A.columns(), A.columns());
 		ret.add(Q);

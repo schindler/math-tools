@@ -138,4 +138,13 @@ public class DoubleField implements Field {
 	public void scale(Field other) {
 		value*=((DoubleField)other).value;		
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.fields.Field#neg()
+	 */
+	@Override
+	public Field neg() {
+		return new DoubleField(-1*value);
+	}
 }
