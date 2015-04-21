@@ -30,7 +30,6 @@ public class FullMatrix extends BaseMatrix<Field> {
 		super(lines, columns); 
 		this.elements = new Field [lines][columns];
 		this.zero     = zero;
-		fill(zero);	
 	}
 	
 	/*
@@ -39,9 +38,10 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Field get(int i, int j) {
-		return this.elements [i][j];
+		Field v  =  this.elements [i][j];
+		return v == null ? zero : v;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix#set(int, int, java.lang.Object)
@@ -124,7 +124,7 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Matrix<Field> add(Field elem) {
-		FullMatrix result = new FullMatrix (lines, columns, null);
+		FullMatrix result = new FullMatrix (lines, columns, zero);
 		
 		for (int i = 0; i < lines(); i++) {
 			for (int j = 0; j < columns(); j++) 
@@ -216,7 +216,7 @@ public class FullMatrix extends BaseMatrix<Field> {
 	 */
 	@Override
 	public Matrix<Field> mul(final Field elem) {
-		FullMatrix result = new FullMatrix (lines, columns, null);
+		FullMatrix result = new FullMatrix (lines, columns, zero);
 		return result.call(new Function<Field>() {
 			@Override
 			public Field perform(Field val) {
@@ -235,7 +235,7 @@ public class FullMatrix extends BaseMatrix<Field> {
 		if (columns() != other.lines())
 			throw new IndexOutOfBoundsException("mul columns() has to be equal other.lines()");
 		
-		FullMatrix result = new FullMatrix(lines, other.columns(), null);		
+		FullMatrix result = new FullMatrix(lines, other.columns(), zero);		
 		int aCols         = columns; 
 		int bCols         = other.columns();
 		Field[][] rst     = result.elements;

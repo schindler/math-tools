@@ -89,13 +89,15 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 		SparseMatrix result = new SparseMatrix(lines, other.columns(), zero);		
 		for (int c = 0; c < other.columns(); c++){
 			 for (Integer k : elements.keySet()){
-				int l =(k % columns); 
+				int l =(k / columns); 
 				int rk = result.columns*l+c;
 				Field v = result.elements.get(rk);				
 				if (null == v)
 					v = zero.clone();				
-				v.inc(elements.get(k).mul(other.get(l, c)));
-				if (!v.equals(zero))
+				v.inc(elements.get(k).mul(other.get(k-l*columns, c)));
+				if (v.equals(zero))
+					result.elements.remove(rk);
+				else
 					result.elements.put(rk, v);
 			 }
 		}
@@ -237,7 +239,7 @@ public class SparseMatrix  extends BaseMatrix<Field> {
 	public Matrix<Field> transpose() {
 		SparseMatrix ret = new SparseMatrix(columns, lines, zero);
 		for (Integer k : elements.keySet()){
-			int i =(k %    columns); 
+			int i =(k /    columns); 
 			int j = k - (i*columns);
 			ret.elements.put(j*lines+i, elements.get(k));
 		}
