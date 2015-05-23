@@ -1,9 +1,11 @@
 package br.schindler.math.matrix.load.octave;
 
 import br.schindler.math.matrix.Matrix;
+import br.schindler.math.matrix.fields.FullMatrix;
+import br.schindler.math.matrix.fields.SparseMatrix;
+import br.schindler.math.matrix.fields.real.DoubleField;
+import br.schindler.math.matrix.fields.real.DoubleMatrix;
 import br.schindler.math.matrix.load.MatrixFactory;
-import br.schindler.math.matrix.primitive.DoubleMatrix;
-
 
 /**
  * 
@@ -24,8 +26,8 @@ public class DoubleFactory implements MatrixFactory<Double> {
 	 */
 	@Override
 	public Matrix<Double> create(int lines, int cols) {
-		//return new DoubleMatrix(new FullMatrix(lines, cols, new DoubleField(0.0)));
-		return new DoubleMatrix(lines, cols);
+		return new DoubleMatrix(new SparseMatrix(lines, cols, new DoubleField(0.0)));
+		//return new DoubleMatrix(lines, cols);
 	}
 
 	/*

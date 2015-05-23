@@ -1,9 +1,10 @@
 /**
  * 
  */
-package br.schindler.math.matrix.fields;
+package br.schindler.math.matrix.fields.real;
 
 import br.schindler.math.matrix.Matrix;
+import br.schindler.math.matrix.fields.Field;
 import br.schindler.math.matrix.operations.Function;
 
 /**

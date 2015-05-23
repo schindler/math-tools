@@ -1,7 +1,9 @@
 /**
  * 
  */
-package br.schindler.math.matrix.fields;
+package br.schindler.math.matrix.fields.real;
+
+import br.schindler.math.matrix.fields.Field;
 
 
 /**

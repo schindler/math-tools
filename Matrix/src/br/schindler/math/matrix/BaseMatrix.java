@@ -73,8 +73,7 @@ public abstract class BaseMatrix<T> implements Matrix<T> {
 		if (ncols < 0)
 			ncols = columns - ncols + 1;
 
-		if (fromLine < 0 || nlines < 0 || fromCol < 0 || nlines > lines
-				|| ncols > columns)
+		if (fromLine < 0 || nlines < 0 || fromCol < 0 || nlines > lines || ncols > columns)
 			throw new IndexOutOfBoundsException();
 
 		for (int i = fromLine, ic = 0; i < nlines; i++, ic++) {
