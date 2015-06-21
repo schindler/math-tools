@@ -5,8 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.schindler.math.matrix.BaseMatrix;
 import br.schindler.math.matrix.Matrix;
 import br.schindler.math.matrix.load.Loader;
+import br.schindler.math.matrix.math.MatrixMath;
+import br.schindler.math.matrix.util.Util;
 
 /**
  * 
@@ -37,7 +40,7 @@ public class Atena {
 			if (previous != null && (previous.lines() != (layer.columns()+1)))
 				throw new InvalidNetworkFlowException();		
 			/*
-			 * Já deixo de forma correta
+			 * JÃ¡ deixo de forma correta
 			 */
 			thetas.add((previous = layer).transpose());
 		}			
@@ -46,22 +49,36 @@ public class Atena {
 	/**
 	 * Aplicar uma entrada(s) a rede
 	 * @param input entrada desejada para a rede
-	 * @param activations (opcional) lista que receberá as ativações de cada camada
-	 * @return Matrix<Double> sendo a cada de saída da rede
+	 * @param activations (opcional) lista que receberÃ¡ as ativaÃ§Ãµes de cada camada
+	 * @return Matrix<Double> sendo a cada de saÃ­da da rede
 	 */
-	public Matrix<Double> predict(Matrix<Double> input, List<Matrix<Double>> activations){
+	public Matrix<Double> predict(BaseMatrix<Double> input, List<Matrix<Double>> activations){
+		Matrix<Double>   result = null;
+		BaseMatrix<Double> bias = (BaseMatrix<Double>) input.create(input.lines(), 1).fill(1.0);
+			
+		/*
+		 * Repassar na rede a entrada
+		 */
+		for (Matrix<Double> layer : thetas){
+			/*
+			 * Adicionar 1's (bias)
+			 */
+			result = input = (BaseMatrix<Double>) MatrixMath.sigmoid(Util.cat(bias, input).mul(layer));
+
+			if (null != activations)
+				activations.add(input);	
+			
+		}		
 		
-		
-		
-		return null;
+		return result;
 	}
 	
 	/**
 	 * Aplicar uma entrada(s) a rede
 	 * @param input entrada desejada para a rede
-	 * @return Matrix<Double> sendo a cada de saída da rede
+	 * @return Matrix<Double> sendo a cada de saÃ­da da rede
 	 */
-	public Matrix<Double> predict(Matrix<Double> input){
+	public Matrix<Double> predict(BaseMatrix<Double> input){
 		return predict(input, null);
 	}
 }
