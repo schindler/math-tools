@@ -51,8 +51,9 @@ public class OctaveLoader<N> implements Loader<N> {
 				throw new RuntimeException("invalid octave type " + type);
 			}
 
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			//throw new RuntimeException(e);
+			result = null;
 		}
 
 		return result;

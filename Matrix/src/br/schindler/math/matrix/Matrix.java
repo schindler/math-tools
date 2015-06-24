@@ -158,6 +158,14 @@ public interface Matrix<T> {
 	 * @return Essa matrix com as alterações efetuadas
 	 */
 	Matrix<T> call(Iterable<Integer> lines, Iterable<Integer> columns, Function<T> func);
+	
+	/**
+	 * Criar uma matrix com as dimensões especificadas
+	 * @param lines
+	 * @param columns
+	 * @return Nova matrix
+	 */
+	Matrix<T> create(int lines, int columns);
 
 	/**
 	 * @return numero de linhas

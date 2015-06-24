@@ -241,4 +241,13 @@ public class DoubleMatrix implements Matrix<Double> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#create(int, int)
+	 */
+	@Override
+	public Matrix<Double> create(int lines, int columns) {
+		return new DoubleMatrix(this.matrix.create(lines, columns));
+	}
 }

@@ -24,14 +24,6 @@ public abstract class BaseMatrix<T> implements Matrix<T> {
 		this.columns = columns;
 	}
 
-	/**
-	 * 
-	 * @param lines
-	 * @param columns
-	 * @param zero
-	 */
-	public abstract BaseMatrix<T> create(int lines, int columns);
-
 	/*
 	 * (non-Javadoc)
 	 * 
