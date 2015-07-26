@@ -1,7 +1,5 @@
 package test.qr;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,9 +12,9 @@ public class TestQR {
 	@Test
 	public void test(){		
 		Matrix<Double> A = MatrixMath.rand(F.create(20,20));
-		List<Matrix<Double>> QR = MatrixMath.qr(A);
-		Matrix<Double> Q = QR.get(0);
-		Matrix<Double> R = QR.get(1);
+		Matrix<Double> [] QR = MatrixMath.qr(A);
+		Matrix<Double> Q = QR[0];
+		Matrix<Double> R = QR[1];
 		Assert.assertTrue(Q.mul(R).equals(A));
 		Matrix<Double> Qt   = Q.transpose();
 		Matrix<Double> QtxQ = Qt.mul(Q);

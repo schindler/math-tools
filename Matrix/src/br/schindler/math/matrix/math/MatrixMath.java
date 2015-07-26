@@ -1,18 +1,33 @@
 package br.schindler.math.matrix.math;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import br.schindler.math.matrix.Matrix;
-import br.schindler.math.matrix.load.MatrixFactory;
 import br.schindler.math.matrix.operations.Function;
 
+/*
+ * 
+ */
 public class MatrixMath {
 	/*
 	 * 
 	 */
 	private static Random RANDOM = new Random();
+	
+	
+	/*
+	 * 
+	 */
+	static public double EPS;
+	
+	/*
+	 * 
+	 */
+	static {
+		EPS = 1;
+		while ((1 + EPS) > 1) EPS /= 10;
+		EPS *= 10;		
+	}
 
 	/**
 	 * 
@@ -93,14 +108,14 @@ public class MatrixMath {
 	 * @param matrix
 	 * @return
 	 */
-	static public List<Matrix<Double>> qr(Matrix<Double> A){
-		List<Matrix<Double>> ret = new ArrayList<Matrix<Double>>();
+	@SuppressWarnings("unchecked")
+	static public Matrix<Double> [] qr(Matrix<Double> A){ 
 		Double []      b = new Double [A.lines()];//TODO: Poderia ser Sparse?
 		Double []      v = new Double [A.lines()];//TODO: Poderia ser Sparse?
+		
 		Matrix<Double> Q = A.create(A.lines(),   A.columns());
 		Matrix<Double> R = A.create(A.columns(), A.columns());
-		ret.add(Q);
-		ret.add(R);	
+ 
 		for (int c = 0, s = 0; c < A.columns(); c++, s++){				
 			for (int i = 0; i < A.lines(); i++) b[i] = A.get(i, c);			
 			R.set(s, c, 1.0);	
@@ -113,7 +128,7 @@ public class MatrixMath {
 					vb  += ve*b[e];
 					v[e] = ve;
 				}
-				vb = (n2 > 1e-20) ? (vb / n2) : 0.0;
+				vb = (n2 > EPS) ? (vb / n2) : 0.0;
 				R.set(i, c, vb);
 				for (int e = 0; e < A.lines(); e++) b[e] -= (v[e] * vb);
 			}
@@ -128,18 +143,18 @@ public class MatrixMath {
 				v[e] = ve;
 			}
 			n = Math.sqrt(n2);
-			if (n2 > 1e-20){
+			if (n2 > EPS){
 				for (int e = 0; e < Q.lines();   e++) Q.set(e, c, v[e] / n);
 				for (int e = 0; e < R.columns(); e++) R.set(c, e, R.get(c, e) * n);
 			}						
 		}
-		return ret;
+		return new Matrix [] {Q, R};
 	}
 	
 	
 	static public Matrix<Double> solve(Matrix<Double> A, Matrix<Double> b) {
-		List<Matrix<Double>> qr = qr(A);
-		return triangular_solve(qr.get(1), qr.get(0).transpose().mul(b));
+		Matrix<Double> [] qr = qr(A);
+		return triangular_solve(qr[1], qr[0].transpose().mul(b));
 	}
 	
 	static public Matrix<Double> triangular_solve(Matrix<Double> A, Matrix<Double> b) {
@@ -153,9 +168,9 @@ public class MatrixMath {
 	static public Matrix<Double> inv (Matrix<Double> A) {
 		Matrix<Double> ret = A.create(A.lines(), A.columns());
 		Matrix<Double>   e = A.create(A.lines(),  1);
-		List<Matrix<Double>> qr = qr(A);
-		Matrix<Double> Qt = qr.get(0).transpose();
-		Matrix<Double> R  = qr.get(1);
+		Matrix<Double> [] qr = qr(A);
+		Matrix<Double> Qt = qr[0].transpose();
+		Matrix<Double> R  = qr[1];
 				
 		for (int i = 0; i < A.columns(); i++){
 			e.set(i, 0, 1.0);
