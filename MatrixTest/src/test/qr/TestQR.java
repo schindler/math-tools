@@ -14,7 +14,7 @@ public class TestQR {
 	@Test
 	public void test(){		
 		Matrix<Double> A = MatrixMath.rand(F.create(20,20));
-		List<Matrix<Double>> QR = MatrixMath.qr(A, F);
+		List<Matrix<Double>> QR = MatrixMath.qr(A);
 		Matrix<Double> Q = QR.get(0);
 		Matrix<Double> R = QR.get(1);
 		Assert.assertTrue(Q.mul(R).equals(A));
@@ -34,7 +34,7 @@ public class TestQR {
 		b.set(0, 0, 3.0);
 		b.set(1, 0, 7.0);
 		b.set(2, 0, 1.0);
-		x = MatrixMath.solve(A, b, F);
+		x = MatrixMath.solve(A, b);
 		e = A.mul(x).sub(b);
 		Assert.assertEquals(0.0, e.transpose().mul(e).get(0, 0), 1e-8);
 		//System.err.println(MatrixMath.inv(A, F).mul(b));

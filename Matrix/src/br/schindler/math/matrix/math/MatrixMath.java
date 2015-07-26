@@ -93,12 +93,12 @@ public class MatrixMath {
 	 * @param matrix
 	 * @return
 	 */
-	static public List<Matrix<Double>> qr(Matrix<Double> A, MatrixFactory<Double> factory){
+	static public List<Matrix<Double>> qr(Matrix<Double> A){
 		List<Matrix<Double>> ret = new ArrayList<Matrix<Double>>();
 		Double []      b = new Double [A.lines()];//TODO: Poderia ser Sparse?
 		Double []      v = new Double [A.lines()];//TODO: Poderia ser Sparse?
-		Matrix<Double> Q = factory.create(A.lines(),   A.columns());
-		Matrix<Double> R = factory.create(A.columns(), A.columns());
+		Matrix<Double> Q = A.create(A.lines(),   A.columns());
+		Matrix<Double> R = A.create(A.columns(), A.columns());
 		ret.add(Q);
 		ret.add(R);	
 		for (int c = 0, s = 0; c < A.columns(); c++, s++){				
@@ -137,29 +137,29 @@ public class MatrixMath {
 	}
 	
 	
-	static public Matrix<Double> solve(Matrix<Double> A, Matrix<Double> b, MatrixFactory<Double> factory) {
-		List<Matrix<Double>> qr = qr(A, factory);
-		return triangular_solve(qr.get(1), qr.get(0).transpose().mul(b), factory);
+	static public Matrix<Double> solve(Matrix<Double> A, Matrix<Double> b) {
+		List<Matrix<Double>> qr = qr(A);
+		return triangular_solve(qr.get(1), qr.get(0).transpose().mul(b));
 	}
 	
-	static public Matrix<Double> triangular_solve(Matrix<Double> A, Matrix<Double> b, MatrixFactory<Double> factory) {
-		Matrix<Double> ret = factory.create(A.columns(), 1); 		
+	static public Matrix<Double> triangular_solve(Matrix<Double> A, Matrix<Double> b) {
+		Matrix<Double> ret = A.create(A.columns(), 1); 		
 		for (int i = A.columns() - 1; i >=0; i--){
 			ret.set(i, 0, (b.get(i, 0) - A.get(i, i+1, 0, A.columns()).mul(ret).get(0, 0)) / A.get(i,i));
 		}
 		return ret;
 	}
 	
-	static public Matrix<Double> inv (Matrix<Double> A, MatrixFactory<Double> factory) {
-		Matrix<Double> ret = factory.create(A.lines(), A.columns());
-		Matrix<Double>   e = factory.create(A.lines(),  1);
-		List<Matrix<Double>> qr = qr(A, factory);
+	static public Matrix<Double> inv (Matrix<Double> A) {
+		Matrix<Double> ret = A.create(A.lines(), A.columns());
+		Matrix<Double>   e = A.create(A.lines(),  1);
+		List<Matrix<Double>> qr = qr(A);
 		Matrix<Double> Qt = qr.get(0).transpose();
 		Matrix<Double> R  = qr.get(1);
 				
 		for (int i = 0; i < A.columns(); i++){
 			e.set(i, 0, 1.0);
-			ret.set(0, A.lines(), i, i+1, triangular_solve(R, Qt.mul(e), factory));		
+			ret.set(0, A.lines(), i, i+1, triangular_solve(R, Qt.mul(e)));		
 			e.set(i, 0, 0.0);
 		}
 		
