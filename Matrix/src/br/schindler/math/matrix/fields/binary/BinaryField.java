@@ -4,7 +4,6 @@
 package br.schindler.math.matrix.fields.binary;
 
 import br.schindler.math.matrix.fields.Field;
-import br.schindler.math.matrix.fields.real.DoubleField;
 
 /**
  * @author Fernando
