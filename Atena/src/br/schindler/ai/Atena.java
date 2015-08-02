@@ -20,12 +20,12 @@ import br.schindler.math.matrix.util.Util;
  * 
  * <p/><h2>Formato esperado para cada camada no modelo: Input->hide-> out:</h2><p/>
  * 
- * <p/><b>ENTRADA:</b> Matrix NxM onde: N número de neurônios na cada intermediária e M número de entradas + bias
+ * <p/><b>ENTRADA:</b> Matrix NxM no qual: N número de neurônios na cada intermediária e M na de entrada + bias
  * 
- * <p/><b>SAÍDA:</b>   Matrix UxN1 onde: U número de neuronios na cada de saída e N1 na cada intermediária + bias 
+ * <p/><b>SAÍDA:</b>   Matrix UxN1 no qual: U número de neurônios na cada de saída e N1 na intermediária + bias 
  * 
  * 
- * @author fernando.schindler@gmail.com
+ * @author <a href="mailto:fernando.schindler@gmail.com">Fernando Schindler</a>
  */
 public class Atena {
 	/*
