@@ -59,11 +59,15 @@ public class MulTest {
 			System.err.println(String.format("Matrix M1 %dx%d", m1.lines(), m1.columns()));
 			System.err.println(String.format("Matrix M2 %dx%d", m2.lines(), m2.columns()));
 			System.err.println(String.format("Matrix RT %dx%d", rt.lines(), rt.columns()));
+			
+			long start = System.currentTimeMillis();
 		 
 			for (int i = 0; i < 1000; i++){
 				Matrix<Double> r = m1.mul(m2);
 				Assert.assertEquals(String.format("ID: %d", i), true, rt.equals(r));
 			}
+			
+			System.err.println("Time: " + (System.currentTimeMillis()-start) + "ms");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

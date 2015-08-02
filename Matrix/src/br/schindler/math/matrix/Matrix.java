@@ -5,7 +5,7 @@ import br.schindler.math.matrix.operations.Function;
 
 /**
  * Interface padrão para objetos que implementaão operações com matrizes
- * @author fernando.schindler@gmail.com
+ * @author <a href="mailto:fernando.schindler@gmail.com">Fernando Schindler</a>
  */
 public interface Matrix<T> {
 
@@ -27,8 +27,24 @@ public interface Matrix<T> {
 	 * @return NOVA sub matrix formada 
 	 */
 	Matrix<T> get(int fromLine, int lines, int fromCol, int toCol);
+	
+	
+	/**
+	 * Criar um array da linha desejada
+	 * @param line linha desejada
+	 * @return Array com a linha desejada
+	 */
+	T [] getRow(int line);
+	
+	
+	/**
+	 * Criar um array da coluna desejada
+	 * @param col coluna desejada
+	 * @return Array com a coluna desejada
+	 */
+	T [] getCol(int col);
 
-
+	
 	/**
 	 * Copiar valores de outra matrix para essa
 	 * @param fromLine linha inicial

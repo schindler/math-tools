@@ -46,6 +46,32 @@ public class DoubleMatrix implements Matrix<Double> {
 	
 	/*
 	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#getCol(int)
+	 */
+	@Override
+	public Double[] getCol(int col) {
+		Field [] c = this.matrix.getCol(col);
+		Double[] r = new Double[c.length];	
+		int i      = 0;
+		for (Field f : c) r[i++] = (Double) f.value();
+		return r;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#getRow(int)
+	 */
+	@Override
+	public Double[] getRow(int line) {
+		Field [] c = this.matrix.getRow(line);
+		Double[] r = new Double[c.length];	
+		int i      = 0;
+		for (Field f : c) r[i++] = (Double) f.value();
+		return r;
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see br.schindler.math.matrix.Matrix#set(int, int, int, int, br.schindler.math.matrix.Matrix)
 	 */
 	@Override

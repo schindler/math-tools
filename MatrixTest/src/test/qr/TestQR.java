@@ -37,4 +37,37 @@ public class TestQR {
 		Assert.assertEquals(0.0, e.transpose().mul(e).get(0, 0), 1e-8);
 		//System.err.println(MatrixMath.inv(A, F).mul(b));
 	}
+	
+	@Test
+	public void test2(){		
+		Matrix<Double> A = F.create(2, 4);
+		Matrix<Double> I = F.create(2, 2);
+		int l = 0;				
+		A.set(l, 0, 7.0); A.set(l, 1, 8.0); A.set(l, 2, 9.0); A.set(l, 3, 4.0); l++;
+		A.set(l, 0, 4.0); A.set(l, 1, 5.0); A.set(l, 2, 6.0); A.set(l, 3, 9.0);
+		I.set(0, 0, 1.0); I.set(1, 1, 1.0); 
+		Assert.assertTrue(A.mul(MatrixMath.pinv(A)).equals(I));	 
+	}
+	
+	@Test
+	public void test3(){		
+		Matrix<Double> A = F.create(5, 3);
+		Matrix<Double> b = F.create(5, 1);
+		 
+		int l = 0;
+		
+		A.set(l, 0, 7.0); A.set(l, 1, 8.0); A.set(l, 2, 9.0); l++;
+		A.set(l, 0, 4.0); A.set(l, 1, 5.0); A.set(l, 2, 1.0); l++;
+		A.set(l, 0, 7.0); A.set(l, 1, 3.0); A.set(l, 2, 1.0); l++;
+		A.set(l, 0, 6.0); A.set(l, 1, 5.0); A.set(l, 2, 4.0); l++;
+		A.set(l, 0, 4.0); A.set(l, 1, 5.0); A.set(l, 2, 7.0);
+ 
+		b.set(0, 0, 8.0);
+		b.set(1, 0, 4.0);
+		b.set(2, 0, 1.0);
+		b.set(3, 0, 6.0);
+		b.set(4, 0, 3.0);
+		
+		System.err.println(MatrixMath.solve(A, b));
+	}
 }

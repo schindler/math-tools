@@ -17,12 +17,16 @@ import br.schindler.math.matrix.util.Util;
 
 /**
  * Processa dados tendo como base uma rede treinada
+ *  
+ * <p/>Formato esperado para cada camada no modelo: Input->hide-> out:<p/>
  * 
- * <p/><h2>Formato esperado para cada camada no modelo: Input->hide-> out:</h2><p/>
+ * <ul>
  * 
- * <p/><b>ENTRADA:</b> Matrix NxM no qual: N número de neurônios na cada intermediária e M na de entrada + bias
+ * <p/><li><b>ENTRADA:</b> {@link Matrix} NxM no qual: N número de neurônios na cada intermediária e M na de entrada + bias
  * 
- * <p/><b>SAÍDA:</b>   Matrix UxN1 no qual: U número de neurônios na cada de saída e N1 na intermediária + bias 
+ * <p/><li><b>SAÍDA:</b>   {@link Matrix} UxN1 no qual: U número de neurônios na cada de saída e N1 na intermediária + bias 
+ * 
+ * </ul>
  * 
  * 
  * @author <a href="mailto:fernando.schindler@gmail.com">Fernando Schindler</a>

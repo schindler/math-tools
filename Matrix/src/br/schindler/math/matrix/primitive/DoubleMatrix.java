@@ -38,6 +38,7 @@ public class DoubleMatrix extends BaseMatrix<Double> {
 	public Double get(int i, int j) {
 		return this.elements[i][j];
 	}
+	 
 	
 	/*
 	 * (non-Javadoc)

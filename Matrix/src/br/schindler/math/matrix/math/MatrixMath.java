@@ -50,7 +50,7 @@ public class MatrixMath {
 	/**
 	 * Aplica função seno
 	 * @param matrix
-	 * @see {@link Math.sin}
+	 * @see {@link java.lang.Math}
 	 * @return {@link Matrix}
 	 */
 	static public Matrix<Double> sin(Matrix<Double> matrix) {
@@ -105,14 +105,24 @@ public class MatrixMath {
 	
 	/**
 	 * 
-	 * @param matrix
-	 * @return
+	 */
+	static public Double min (Matrix<Double> matrix) {
+		return null;
+	}
+	
+	/**
+	 * Calcula a fatoração QR por meio de ortogonalização
+	 * 
+	 * <p/> {@code}  Q.mul(R).equal(A) == true   {@code}
+	 * 
+	 * @param matrix {@link Matrix} a ser fatorada
+	 * 
+	 * @return Array no qual a posição zero tem Q e a posição 1 R
 	 */
 	@SuppressWarnings("unchecked")
 	static public Matrix<Double> [] qr(Matrix<Double> A){ 
 		Double []      b = new Double [A.lines()];//TODO: Poderia ser Sparse?
 		Double []      v = new Double [A.lines()];//TODO: Poderia ser Sparse?
-		
 		Matrix<Double> Q = A.create(A.lines(),   A.columns());
 		Matrix<Double> R = A.create(A.columns(), A.columns());
  
@@ -151,12 +161,23 @@ public class MatrixMath {
 		return new Matrix [] {Q, R};
 	}
 	
-	
+	/**
+	 * Resolve o sistema A*x=b
+	 * @param A
+	 * @param b
+	 * @return @{link Matrix} coluna com o resultado
+	 */
 	static public Matrix<Double> solve(Matrix<Double> A, Matrix<Double> b) {
 		Matrix<Double> [] qr = qr(A);
 		return triangular_solve(qr[1], qr[0].transpose().mul(b));
 	}
 	
+	/**
+	 * 
+	 * @param A
+	 * @param b
+	 * @return
+	 */
 	static public Matrix<Double> triangular_solve(Matrix<Double> A, Matrix<Double> b) {
 		Matrix<Double> ret = A.create(A.columns(), 1); 		
 		for (int i = A.columns() - 1; i >=0; i--){
@@ -165,12 +186,18 @@ public class MatrixMath {
 		return ret;
 	}
 	
+	/**
+	 * 
+	 * @param A
+	 * @return
+	 */
 	static public Matrix<Double> inv (Matrix<Double> A) {
-		Matrix<Double> ret = A.create(A.lines(), A.columns());
-		Matrix<Double>   e = A.create(A.lines(),  1);
+		
 		Matrix<Double> [] qr = qr(A);
-		Matrix<Double> Qt = qr[0].transpose();
-		Matrix<Double> R  = qr[1];
+		Matrix<Double>    Qt = qr[0].transpose();
+		Matrix<Double>     R = qr[1];		
+		Matrix<Double>   ret = A.create(A.lines(), A.lines());
+		Matrix<Double>     e = A.create(A.lines(),  1);
 				
 		for (int i = 0; i < A.columns(); i++){
 			e.set(i, 0, 1.0);
@@ -179,6 +206,28 @@ public class MatrixMath {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * 
+	 * @param A
+	 * @return
+	 */
+	static public Matrix<Double> pinv (Matrix<Double> A) {
+		
+		if (A.lines() < A.columns()){
+			Matrix<Double> At = A.transpose();
+			return At.mul(inv(A.mul(At)));
+		}
+		else
+		{
+			if (A.lines() > A.columns()){
+				Matrix<Double> At = A.transpose();
+				return (inv(At.mul(A))).mul(At);
+			}
+		}
+		
+		return inv(A);
 	}
 	
 }

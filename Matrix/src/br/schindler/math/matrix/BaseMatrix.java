@@ -1,15 +1,15 @@
 package br.schindler.math.matrix;
 
+import java.lang.reflect.Array;
+
 import br.schindler.math.matrix.operations.Function;
 
 /**
- * 
- * @author Fernando
- *
- * @param <T>
+ * Implementação básica da interface {@link Matrix}
+ * @param <T> Tipo dos elementos internos da {@link Matrix}
+ * @author <a href="mailto:fernando.schindler@gmail.com">Fernando Schindler</a>
  */
 public abstract class BaseMatrix<T> implements Matrix<T> {
-
 	/**
 	 * Indica as linhas e colunas dessa matrix
 	 */
@@ -48,6 +48,30 @@ public abstract class BaseMatrix<T> implements Matrix<T> {
 			}
 		}
 
+		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#getCol(int)
+	 */
+	@Override
+	public T[] getCol(int col) {
+		@SuppressWarnings("unchecked")
+		T [] result = (T []) Array.newInstance(Object.class, lines());		
+		for (int i = 0; i < lines(); i++) result [i] = get(i, col);		
+		return result;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.schindler.math.matrix.Matrix#getRow(int)
+	 */
+	@Override
+	public T[] getRow(int line) {
+		@SuppressWarnings("unchecked")
+		T [] result = (T []) Array.newInstance(Object.class, columns());		
+		for (int j = 0; j < columns(); j++) result [j] = get(line, j);		
 		return result;
 	}
 
