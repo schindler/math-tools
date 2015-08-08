@@ -10,23 +10,17 @@ import br.schindler.math.matrix.operations.Function;
  */
 public class MatrixMath {
 	/*
-	 * 
+	 * Usado para cálculos internos
 	 */
-	private static Random RANDOM = new Random();
+	final private static Random RANDOM = new Random();
 	
 	
 	/*
-	 * 
+	 * Calculado em tempo de execução para ter o melhor valor para precisão flutuante
 	 */
-	static public double EPS;
-	
-	/*
-	 * 
-	 */
+	static public double EPS; 
 	static {
-		EPS = 1;
-		while ((1 + EPS) > 1) EPS /= 10;
-		EPS *= 10;		
+		EPS = 1; while ((1 + EPS) > 1) EPS /= 10; EPS *= 10;		
 	}
 
 	/**
@@ -123,8 +117,8 @@ public class MatrixMath {
 	static public Matrix<Double> [] qr(Matrix<Double> A){ 
 		Double []      b = new Double [A.lines()];//TODO: Poderia ser Sparse?
 		Double []      v = new Double [A.lines()];//TODO: Poderia ser Sparse?
-		Matrix<Double> Q = A.create(A.lines(),   A.columns());
-		Matrix<Double> R = A.create(A.columns(), A.columns());
+		Matrix<Double> Q = A.create(A.lines(),   A.lines());
+		Matrix<Double> R = A.create(A.lines(), A.columns());
  
 		for (int c = 0, s = 0; c < A.columns(); c++, s++){				
 			for (int i = 0; i < A.lines(); i++) b[i] = A.get(i, c);			
@@ -173,10 +167,10 @@ public class MatrixMath {
 	}
 	
 	/**
-	 * 
-	 * @param A
-	 * @param b
-	 * @return
+	 * Resolve o sistema A*x=b no qual A deve ser uma matriz triangular superior
+	 * @param A  matriz triangular superior
+	 * @param b  
+	 * @return x 
 	 */
 	static public Matrix<Double> triangular_solve(Matrix<Double> A, Matrix<Double> b) {
 		Matrix<Double> ret = A.create(A.columns(), 1); 		
@@ -187,9 +181,12 @@ public class MatrixMath {
 	}
 	
 	/**
+	 * Calcular matrix inversa de A
 	 * 
+	 *  A*inv(A) = I
+	 *  
 	 * @param A
-	 * @return
+	 * @return A inversa
 	 */
 	static public Matrix<Double> inv (Matrix<Double> A) {
 		
@@ -209,18 +206,24 @@ public class MatrixMath {
 	}
 	
 	/**
-	 * 
-	 * @param A
-	 * @return
+	 * Retorna a pseudo-inversa de A
+	 * @param A 
+	 * @return {@link Matrix} 
 	 */
 	static public Matrix<Double> pinv (Matrix<Double> A) {
 		
 		if (A.lines() < A.columns()){
+			/*
+			 * Sistema tem varias soluções exatas
+			 */
 			Matrix<Double> At = A.transpose();
 			return At.mul(inv(A.mul(At)));
 		}
 		else
 		{
+			/*
+			 * Achar uma solução aproximada
+			 */
 			if (A.lines() > A.columns()){
 				Matrix<Double> At = A.transpose();
 				return (inv(At.mul(A))).mul(At);
