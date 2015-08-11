@@ -9,6 +9,7 @@ import br.schindler.math.matrix.math.MatrixMath;
 
 public class TestQR {
 	private DoubleFactory  F = new DoubleFactory();
+	
 	@Test
 	public void test(){		
 		Matrix<Double> A = MatrixMath.rand(F.create(20,20));
@@ -20,6 +21,7 @@ public class TestQR {
 		Matrix<Double> QtxQ = Qt.mul(Q);
 		Assert.assertTrue(QtxQ.mul(A).equals(A));
 	}
+	
 	@Test
 	public void test1(){
 		Matrix<Double> A = MatrixMath.rand(F.create(3, 3));
@@ -53,7 +55,8 @@ public class TestQR {
 	public void test3(){		
 		Matrix<Double> A = F.create(5, 3);
 		Matrix<Double> b = F.create(5, 1);
-		 
+		Matrix<Double> x = F.create(3, 1);
+		
 		int l = 0;
 		
 		A.set(l, 0, 7.0); A.set(l, 1, 8.0); A.set(l, 2, 9.0); l++;
@@ -68,6 +71,31 @@ public class TestQR {
 		b.set(3, 0, 6.0);
 		b.set(4, 0, 3.0);
 		
-		System.err.println(MatrixMath.solve(A, b));
+		x.set(0, 0, -0.2067351);
+		x.set(1, 0, 1.1000720);
+		x.set(2, 0, -0.0031155);
+	 
+		Assert.assertTrue(MatrixMath.solve(A, b).equals(x));	
+ 
+	}
+	
+	@Test
+	public void test4(){		
+		Matrix<Double> A = MatrixMath.rand(F.create(20,10));
+		Matrix<Double> [] QR = MatrixMath.qr(A);
+		Matrix<Double> Q = QR[0];
+		Matrix<Double> R = QR[1];
+		Assert.assertTrue(Q.mul(R).equals(A));
+		Assert.assertTrue(Q.mul(Q.transpose()).mul(A).equals(A));
+	}
+	
+	@Test
+	public void test5(){		
+		Matrix<Double> A = MatrixMath.rand(F.create(1000,2000));
+		Matrix<Double> [] QR = MatrixMath.qr(A);
+		Matrix<Double> Q = QR[0];
+		Matrix<Double> R = QR[1];
+		Assert.assertTrue(Q.mul(R).equals(A)); 
+		Assert.assertTrue(Q.mul(Q.transpose()).mul(A).equals(A));
 	}
 }

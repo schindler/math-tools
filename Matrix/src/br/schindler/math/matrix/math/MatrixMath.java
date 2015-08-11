@@ -107,7 +107,8 @@ public class MatrixMath {
 	/**
 	 * Calcula a fatoração QR por meio de ortogonalização
 	 * 
-	 * <p/> {@code}  Q.mul(R).equal(A) == true   {@code}
+	 * <p/> {@code}  Q.mul(R).equal(A)             == true   {@code}
+	 * <p/> {@code}  Q.mul(Q.transpose()).equal(I) == true   {@code}
 	 * 
 	 * @param matrix {@link Matrix} a ser fatorada
 	 * 
@@ -117,8 +118,8 @@ public class MatrixMath {
 	static public Matrix<Double> [] qr(Matrix<Double> A){ 
 		Double []      b = new Double [A.lines()];//TODO: Poderia ser Sparse?
 		Double []      v = new Double [A.lines()];//TODO: Poderia ser Sparse?
-		Matrix<Double> Q = A.create(A.lines(),   A.lines());
-		Matrix<Double> R = A.create(A.lines(), A.columns());
+		Matrix<Double> Q = A.create(A.lines(),   A.columns());
+		Matrix<Double> R = A.create(A.columns(), A.columns());
  
 		for (int c = 0, s = 0; c < A.columns(); c++, s++){				
 			for (int i = 0; i < A.lines(); i++) b[i] = A.get(i, c);			
